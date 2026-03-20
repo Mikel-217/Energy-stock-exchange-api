@@ -6,8 +6,8 @@ This is a API which tells the user when to buy energy. This can be all kinds of 
 
 
 ## APIs in use:
-- [Energy-Chart](https://www.energy-charts.info/) API
-- [Bundesnetzargentur (SMARD)](https://www.smard.de/home) API
+- [Energy-Chart](https://api.energy-charts.info/) API
+- [Bundesnetzargentur (SMARD)](https://smard.api.bund.dev/) API
 - TODO: search for more
 
 # Planing
