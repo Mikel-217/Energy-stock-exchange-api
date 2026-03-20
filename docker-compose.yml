@@ -1,0 +1,29 @@
+services:
+  matchma-server:
+    build: .
+    command: ["/matchma", "--testing", "--player-count=200"]
+    depends_on:
+      matchma-db:
+        condition: service_healthy # we wait for the database to be fully ready
+    environment:
+      JWT-Secret: "Production_test_here_i_come" # Change this if production!
+      DB-Conn: "server:password@tcp(energy-db:3306)/TODO" # TODO add db
+    ports:
+      - "8080:8080"
+    links:
+      - "matchma-db"
+
+  energy-db:
+    image: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: "1234" # Change this if production! Also deactivate the root access!
+      MYSQL_DATABASE: "Energy" # DO NOT change this!
+      MYSQL_USER: "TODO"
+      MYSQL_PASSWORD: "1234" # Change this if production! Note that you have to change the connection string
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    ports:
+      - "3306:3306"
