@@ -13,7 +13,7 @@ func main() {
 
 	// Create the tables -> if it fails we cannot continue
 	if !startup.CreateDatabaseTables() {
-		fmt.Println("Check the logs and your database connection! \n Program cannot start :(")
+		fmt.Println("Check the logs and your database connection! \n Program cannot start, but we are checking...")
 		os.Exit(1)
 	}
 

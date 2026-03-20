@@ -1,7 +1,7 @@
 services:
   matchma-server:
     build: .
-    command: ["/matchma", "--testing", "--player-count=200"]
+    command: ["/energy-stock-exchange-api"]
     depends_on:
       matchma-db:
         condition: service_healthy # we wait for the database to be fully ready
