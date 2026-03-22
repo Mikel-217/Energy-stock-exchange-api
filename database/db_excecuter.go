@@ -14,16 +14,9 @@ type Result struct {
 	ErrorMsg error
 }
 
-// This func needs the complete SQL-Statement as a string and it arguments as an string slice
+// This func needs the complete SQL-Statement as a string and it arguments
 // It returns an struct with the last Id and an error to indicate success
-func ExecuteSQL(sqlQuery string, args []string) *Result {
-
-	arguments := make([]any, len(args))
-
-	// Converts the given strings to an interface
-	for i, arg := range args {
-		arguments[i] = arg
-	}
+func ExecuteSQL(sqlQuery string, args []any) *Result {
 
 	db := CreateDBConn()
 
@@ -37,7 +30,7 @@ func ExecuteSQL(sqlQuery string, args []string) *Result {
 	defer db.Close()
 
 	// Excecute the given command with all arguments
-	queryResult, err := db.Exec(sqlQuery, arguments...)
+	queryResult, err := db.Exec(sqlQuery, args...)
 
 	if err != nil {
 		logging.Log(logging.Error, err.Error())
