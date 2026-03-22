@@ -3,7 +3,7 @@ services:
     build: .
     command: ["/energy-stock-exchange-api"]
     depends_on:
-      matchma-db:
+      energy-db:
         condition: service_healthy # we wait for the database to be fully ready
     environment:
       JWT-Secret: "Production_test_here_i_come" # Change this if production!
@@ -11,7 +11,7 @@ services:
     ports:
       - "8080:8080"
     links:
-      - "matchma-db"
+      - "energy-db"
 
   energy-db:
     image: mariadb
