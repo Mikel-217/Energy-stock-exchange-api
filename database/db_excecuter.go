@@ -18,7 +18,7 @@ type Result struct {
 // It returns an struct with the last Id and an error to indicate success
 func ExecuteSQL(sqlQuery string, args []string) *Result {
 
-	arguments := make([]interface{}, len(args))
+	arguments := make([]any, len(args))
 
 	// Converts the given strings to an interface
 	for i, arg := range args {
@@ -36,6 +36,7 @@ func ExecuteSQL(sqlQuery string, args []string) *Result {
 
 	defer db.Close()
 
+	// Excecute the given command with all arguments
 	queryResult, err := db.Exec(sqlQuery, arguments...)
 
 	if err != nil {

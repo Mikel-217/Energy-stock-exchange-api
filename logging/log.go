@@ -9,8 +9,9 @@ import (
 )
 
 const (
-	Error       string = "[Error]"
-	Information string = "[Information]"
+	// Spaces for better view :)
+	Error       string = " [Error] "
+	Information string = " [Information] "
 )
 
 // Creates a new log entry
