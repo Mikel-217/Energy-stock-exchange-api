@@ -5,13 +5,10 @@ import (
 	"net/http"
 	"os"
 
-	apiclient "mikel-kunze.com/energy-stock-exchange-api/api_client"
+	"mikel-kunze.com/energy-stock-exchange-api/helper"
 	"mikel-kunze.com/energy-stock-exchange-api/logging"
 	"mikel-kunze.com/energy-stock-exchange-api/startup"
 )
-
-// save all api clients here
-var AllApiClients []apiclient.ApiClientStruct
 
 func main() {
 
@@ -21,6 +18,10 @@ func main() {
 		fmt.Println("Check the logs and your database connection! \n Program cannot start, but we are checking...")
 		os.Exit(1)
 	}
+
+	// builds all api clients and then handels them in another goroutine
+	allClients, responseChan := helper.BuildAllClients()
+	go helper.HandleAllClients(allClients, responseChan)
 
 	mux := http.NewServeMux()
 

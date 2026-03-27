@@ -35,8 +35,15 @@ func (a *ApiClientStruct) StartFetchingData() {
 
 	defer ticker.Stop()
 
+	httpRequest, err := http.NewRequest("GET", a.FullUrl, nil)
+
+	if err != nil {
+		logging.Log(logging.Error, err.Error())
+		return
+	}
+
 	if a.RequiresKey {
-		// TODO: build the header
+		httpRequest.Header.Add("Authorization", a.ApiKey)
 	}
 
 	for {
