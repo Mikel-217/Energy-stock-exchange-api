@@ -13,6 +13,9 @@ import (
 	"mikel-kunze.com/energy-stock-exchange-api/structs"
 )
 
+// TODO:
+// - Add command for server-console which rebuilds clients
+
 type ClientJson struct {
 	Name        string `json:"api-name"`
 	BaseUrl     string `json:"api-base-url"`
