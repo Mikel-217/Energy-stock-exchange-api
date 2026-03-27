@@ -5,8 +5,8 @@ import "time"
 type EnergyPriceStruct struct {
 	EnergyPriceId  uint // Primary key
 	CurrentDate    time.Time
-	BestTimeToBuy  uint // Foregin key
-	BestTimeToSell uint // Foregin key
+	BestTimeToBuy  uint // foreign key
+	BestTimeToSell uint // foreign key
 }
 
 func (e *EnergyPriceStruct) InsertIntoDatabase() {

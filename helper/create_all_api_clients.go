@@ -31,7 +31,7 @@ func BuildAllClients() ([]apiclient.ApiClientStruct, chan<- structs.EnergyPriceS
 	allClientData := getJsonData()
 
 	if len(allClientData) == 0 {
-		fmt.Println("Please check the loggs, there was an error building the clients. \n Program exists...")
+		fmt.Println("Please check the logs, there was an error building the clients. \n Program cannot start, but we are checking...")
 		os.Exit(1)
 	}
 

@@ -1,10 +1,10 @@
 [
   {
-    "Table-Name": "",
-    "Table-Command": ""
+    "Table-Name": "EnergyPrice",
+    "Table-Command": "CREATE TABLE EnergyPrice(EnergyPriceId INT UNSIGNED NOT NULL AUTO_INCREMENT,CurrentDate DATETIME,BestTimeToBuy INT UNSIGNED NOT NULL,BestTimeToSell INT UNSIGNED NOT NULL,FOREIGN KEY(BestTimeToBuy) REFERENCES DateAndPrice(DatePriceId),FOREIGN KEY(BestTimeToSell) REFERENCES DateAndPrice(DatePriceId),PRIMARY KEY(EnergyPriceId));"
   },
   {
-    "Table-Name": "",
-    "Table-Command": ""
+    "Table-Name": "DateAndPrice",
+    "Table-Command": "CREATE TABLE DateAndPrice(DatePriceId INT UNSIGNED NOT NULL AUTO_INCREMENT,Date DATETIME,Price FLOAT,EnergyPriceId INT UNSIGNED NOT NULL,FOREIGN KEY(EnergyPriceId) REFERENCES EnergyPrice(EnergyPriceId),PRIMARY KEY(DatePriceId));"
   }
 ]
