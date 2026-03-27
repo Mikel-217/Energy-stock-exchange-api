@@ -45,7 +45,7 @@ func CreateDatabaseTables() bool {
 
 		// excecutes the query and checks for errors
 		if result := database.ExecuteSQL(jsonData[i].TableCommand, nil); result.ErrorMsg != nil {
-			logging.Log(logging.Error, err.Error())
+			logging.Log(logging.Error, result.ErrorMsg.Error())
 			return false
 		}
 	}

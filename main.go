@@ -28,6 +28,7 @@ func main() {
 	// starts the server and checks for a error
 	if err := http.ListenAndServe(":8080", mux); err != nil {
 		logging.Log(logging.Error, err.Error())
+		fmt.Println("Check the logs. Cannot start the server...")
 		os.Exit(1)
 	}
 }

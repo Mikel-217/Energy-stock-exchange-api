@@ -9,6 +9,7 @@ import (
 	"time"
 
 	apiclient "mikel-kunze.com/energy-stock-exchange-api/api_client"
+	apistructs "mikel-kunze.com/energy-stock-exchange-api/api_client/api_structs"
 	"mikel-kunze.com/energy-stock-exchange-api/logging"
 	"mikel-kunze.com/energy-stock-exchange-api/structs"
 )
@@ -61,7 +62,7 @@ func BuildAllClients() ([]apiclient.ApiClientStruct, chan<- structs.EnergyPriceS
 func getJsonData() []ClientJson {
 	currDir, _ := os.Getwd()
 
-	filePath := path.Join(currDir, "json", "clientData.json")
+	filePath := path.Join(currDir, "helper", "json", "clientData.json")
 
 	fileData, err := os.ReadFile(filePath)
 
@@ -82,6 +83,10 @@ func getJsonData() []ClientJson {
 
 // gets the given struct for the name
 func getStructType(name string) any {
-	// TODO
-	return nil
+	switch name {
+	case "EnergyCharts":
+		return apistructs.EnergyChartsApiStruct{}
+	default:
+		return nil
+	}
 }
