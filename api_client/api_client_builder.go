@@ -60,7 +60,7 @@ func (a *ApiClientBuilderStruct) WithApiKey(needsKey bool, apiKey string) *ApiCl
 }
 
 // Sets the Output chan
-func (a *ApiClientBuilderStruct) SetOutputChan(givenChan chan<- structs.EnergyPriceStruct) *ApiClientBuilderStruct {
+func (a *ApiClientBuilderStruct) SetOutputChan(givenChan chan structs.EnergyPriceStruct) *ApiClientBuilderStruct {
 	a.client.SendBackChan = givenChan
 	return a
 }

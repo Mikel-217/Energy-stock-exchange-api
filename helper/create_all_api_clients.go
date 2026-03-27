@@ -27,9 +27,15 @@ type ClientJson struct {
 	StructName  string `json:"api-struct-type"`
 }
 
-func BuildAllClients() ([]apiclient.ApiClientStruct, chan<- structs.EnergyPriceStruct) {
+var structRegistry = map[string]any{
+	"EnergyCharts": apistructs.EnergyChartsApiStruct{},
+	// Add new structs here as you create them
+}
 
-	allClientData := getJsonData()
+// Builds all our api clients
+func BuildAllClients() ([]*apiclient.ApiClientStruct, chan structs.EnergyPriceStruct) {
+
+	allClientData := getJsonData() // gets all the required data from the json config
 
 	if len(allClientData) == 0 {
 		fmt.Println("Please check the logs, there was an error building the clients. \n Program cannot start, but we are checking...")
@@ -37,22 +43,25 @@ func BuildAllClients() ([]apiclient.ApiClientStruct, chan<- structs.EnergyPriceS
 	}
 
 	ctx := context.Background()
-	givenChan := make(chan<- structs.EnergyPriceStruct)
+	givenChan := make(chan structs.EnergyPriceStruct)
 
-	allBuildClients := make([]apiclient.ApiClientStruct, 10)
+	allBuildClients := make([]*apiclient.ApiClientStruct, 0, len(allClientData))
 
 	for i := range allClientData {
 		timeDuration, _ := time.ParseDuration(allClientData[i].GetInterval)
 
+		// creates our client builder
 		clientBuilder := apiclient.NewApiClientBuilder()
 
+		// builds our client
 		client := clientBuilder.
 			WithName(allClientData[i].Name).SetBaseUrl(allClientData[i].BaseUrl).SetFullUrl(allClientData[i].FullUrl).
-			WithApiKey(allClientData[i].RequiresKey, allBuildClients[i].ApiKey).
-			WithSructTyp(getStructType(allBuildClients[i].Name)).
+			WithApiKey(allClientData[i].RequiresKey, allClientData[i].ApiKey).
+			WithSructTyp(getStructType(allClientData[i].StructName)).
 			SetInterval(timeDuration).SetCtx(ctx).SetOutputChan(givenChan).Build()
 
-		allBuildClients = append(allBuildClients, *client)
+		// adds the client to the slice
+		allBuildClients = append(allBuildClients, client)
 	}
 
 	return allBuildClients, givenChan
@@ -71,7 +80,7 @@ func getJsonData() []ClientJson {
 		return []ClientJson{}
 	}
 
-	allClients := make([]ClientJson, 10)
+	allClients := make([]ClientJson, 0)
 
 	if err := json.Unmarshal(fileData, &allClients); err != nil {
 		logging.Log(logging.Error, err.Error())
@@ -83,10 +92,10 @@ func getJsonData() []ClientJson {
 
 // gets the given struct for the name
 func getStructType(name string) any {
-	switch name {
-	case "EnergyCharts":
-		return apistructs.EnergyChartsApiStruct{}
-	default:
+	val, ok := structRegistry[name]
+	if !ok {
+		logging.Log(logging.Error, "Unknown API name in config: "+name)
 		return nil
 	}
+	return val
 }

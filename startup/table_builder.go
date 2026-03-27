@@ -50,6 +50,7 @@ func CreateDatabaseTables() bool {
 		}
 	}
 
+	// FIXME
 	os.Setenv("Started", "true")
 
 	return true

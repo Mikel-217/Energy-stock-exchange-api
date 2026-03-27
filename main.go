@@ -23,6 +23,8 @@ func main() {
 	allClients, responseChan := helper.BuildAllClients()
 	go helper.HandleAllClients(allClients, responseChan)
 
+	fmt.Println("Setup successful, now starting web-server...")
+
 	mux := http.NewServeMux()
 
 	// starts the server and checks for a error

@@ -2,11 +2,9 @@
 CREATE TABLE EnergyPrice(
     EnergyPriceId INT UNSIGNED NOT NULL AUTO_INCREMENT,
     CurrentDate DATETIME,
-    BestTimeToBuy INT UNSIGNED NOT NULL, -- foreign key
-    BestTimeToSell INT UNSIGNED NOT NULL, -- foreign key
+    BestTimeToBuy INT UNSIGNED, -- foreign key
+    BestTimeToSell INT UNSIGNED, -- foreign key
 
-    FOREIGN KEY(BestTimeToBuy) REFERENCES DateAndPrice(DatePriceId),
-    FOREIGN KEY(BestTimeToSell) REFERENCES DateAndPrice(DatePriceId),
     PRIMARY KEY(EnergyPriceId)
 );
 
@@ -14,8 +12,16 @@ CREATE TABLE DateAndPrice(
     DatePriceId INT UNSIGNED NOT NULL AUTO_INCREMENT,
     Date DATETIME,
     Price FLOAT,
-    EnergyPriceId INT UNSIGNED NOT NULL, -- foreign key
+    EnergyPriceId INT UNSIGNED, -- foreign key
 
     FOREIGN KEY(EnergyPriceId) REFERENCES EnergyPrice(EnergyPriceId),
     PRIMARY KEY(DatePriceId)
 );
+
+ALTER TABLE EnergyPrice
+ADD CONSTRAINT fk_best_buy
+FOREIGN KEY (BestTimeToBuy) REFERENCES DateAndPrice(DatePriceId);
+
+ALTER TABLE EnergyPrice
+ADD CONSTRAINT fk_best_sell
+FOREIGN KEY (BestTimeToSell) REFERENCES DateAndPrice(DatePriceId);

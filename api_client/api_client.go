@@ -3,6 +3,7 @@ package apiclient
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"reflect"
@@ -31,6 +32,10 @@ type ApiClientStruct struct {
 // Sends it back into a chan
 func (a *ApiClientStruct) StartFetchingData() {
 
+	if a.GetInterval == 0 {
+		a.GetInterval = time.Duration(24 * time.Hour)
+	}
+
 	ticker := time.NewTicker(a.GetInterval)
 
 	defer ticker.Stop()
@@ -39,6 +44,8 @@ func (a *ApiClientStruct) StartFetchingData() {
 
 	if err != nil {
 		logging.Log(logging.Error, err.Error())
+		fmt.Println("Error starting request in: ", a.Name, ". \n Check logs for detailed information")
+
 		return
 	}
 
@@ -53,7 +60,7 @@ func (a *ApiClientStruct) StartFetchingData() {
 		case <-ticker.C:
 
 			// sends a get request with the full url
-			response, err := http.Get(a.FullUrl)
+			response, err := http.DefaultClient.Do(httpRequest)
 
 			if err != nil {
 				logging.Log(logging.Error, err.Error())
@@ -63,20 +70,26 @@ func (a *ApiClientStruct) StartFetchingData() {
 
 			body, err := io.ReadAll(response.Body)
 
-			// Gets the given struct type
 			t := reflect.TypeOf(a.StructType)
+
+			if t == nil {
+				logging.Log(logging.Error, fmt.Sprintf("No struct type defined for client: %s", a.Name))
+				fmt.Println("No struct type defined for client: ", a.Name)
+				break
+			}
+
 			// Creates a new Struct from the given struct type
-			givenStruct := reflect.New(t)
+			givenStruct := reflect.New(t).Interface()
 
 			// unmarshals it into our given struct
-			if err := json.Unmarshal(body, givenStruct.Interface()); err != nil {
+			if err := json.Unmarshal(body, givenStruct); err != nil {
 				logging.Log(logging.Error, err.Error())
 				ticker.Reset(a.GetInterval)
 				break
 			}
 
 			// We then check if it has the interface implemented and then transform our data
-			if converter, ok := givenStruct.Elem().Interface().(EnergyConverter); ok {
+			if converter, ok := givenStruct.(EnergyConverter); ok {
 				a.SendBackChan <- converter.ConvertToEnergyStruct()
 			}
 			ticker.Reset(a.GetInterval)
