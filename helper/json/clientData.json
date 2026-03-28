@@ -1,0 +1,11 @@
+[
+  {
+    "api-name": "Energy-Chart",
+    "api-base-url": "https://api.energy-charts.info/",
+    "api-full-url": "https://api.energy-charts.info/price",
+    "api-requires-key": false,
+    "api-key-site": "",
+    "api-get-interval": "10s",
+    "api-struct-type": "EnergyCharts"
+  }
+]
