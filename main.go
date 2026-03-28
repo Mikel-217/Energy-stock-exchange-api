@@ -32,8 +32,8 @@ func main() {
 	mux := http.NewServeMux()
 
 	// our api interfaces
-	mux.HandleFunc("/price", handlers.HandlePriceRequests)
-	mux.HandleFunc("/recommendation", handlers.HandleRecommendationRequests)
+	mux.HandleFunc("GET /price", handlers.HandlePriceRequests)
+	mux.HandleFunc("GET /recommendation", handlers.HandleRecommendationRequests)
 
 	// starts the server and checks for a error
 	if err := http.ListenAndServe(":8080", mux); err != nil {
