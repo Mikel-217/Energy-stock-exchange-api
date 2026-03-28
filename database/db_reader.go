@@ -11,6 +11,7 @@ type ReadDataClient[T any] struct {
 	QueryParams []any
 }
 
+// To read data from the database
 func (r *ReadDataClient[T]) GetData() []T {
 
 	var results []T
