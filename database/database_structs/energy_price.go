@@ -19,8 +19,8 @@ type EnergyPriceStruct struct {
 // Inserts the given EnergyPriceStruct into the database
 func (e *EnergyPriceStruct) InsertIntoDatabase() (bool, *database.Result) {
 
-	query := "INSERT INTO EnergyPrice() VALUES(DEFAULT, ?, ?, ?);"
-	queryArgs := []any{e.CurrentDate, e.BestTimeToBuy, e.BestTimeToSell}
+	query := "INSERT INTO EnergyPrice() VALUES(DEFAULT, ?, DEFAULT, DEFAULT);"
+	queryArgs := []any{e.CurrentDate}
 
 	result := database.ExecuteSQL(query, queryArgs)
 

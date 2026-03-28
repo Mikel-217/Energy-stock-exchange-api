@@ -20,7 +20,7 @@ type EnergyChartsApiStruct struct {
 }
 
 // Converts the EnergychartsApiStruct to the custom EnergyPriceStruct
-func (e *EnergyChartsApiStruct) ConvertToEnergyPriceStruct() structs.EnergyPriceStruct {
+func (e *EnergyChartsApiStruct) ConvertToEnergyStruct() structs.EnergyPriceStruct {
 
 	convertedStructs := make([]structs.DateAndPriceStruct, 100)
 

@@ -7,15 +7,13 @@ import (
 	"mikel-kunze.com/energy-stock-exchange-api/structs"
 )
 
-// TODO:
-// - Add a func which handels the responses from all clients
-// - Add a func which stores everything in the db
-
+// Handels all clients
+// - Starts the fetching
+// - processes the responses
 func HandleAllClients(clienst []*apiclient.ApiClientStruct, responseChan chan structs.EnergyPriceStruct) {
 
 	// we start the fetching from all clients
 	for i := range clienst {
-
 		// every client gets there own goroutine
 		go clienst[i].StartFetchingData()
 	}
@@ -27,6 +25,7 @@ func HandleAllClients(clienst []*apiclient.ApiClientStruct, responseChan chan st
 	}
 }
 
+// Processes all entry from the given chans
 func processResponse(e structs.EnergyPriceStruct) {
 
 	firstInsert := true // to indicate if its the first time trying or not
@@ -43,8 +42,19 @@ retry:
 		goto retry
 	}
 
+	givenEnergyStruct.EnergyPriceId = resultParent.LastId
+
 	firstInsert = true
 
+	// Inserts all Prices
+	go func() {
+
+		for i := range e.AllPricesAndTheyreTime {
+			e.AllPricesAndTheyreTime[i].ConvertToDatabaseStruct().InsertIntoDatabase()
+		}
+	}()
+
+	// ========= SECTION buy =========
 retryBuy:
 
 	// then we insert the best buy time
@@ -63,6 +73,8 @@ retryBuy:
 	givenEnergyStruct.BestTimeToBuy = resultBuy.LastId
 
 	firstInsert = true
+
+	// ========= SECTION Sell =========
 retrySell:
 
 	// then we insert the best time to sell
@@ -80,8 +92,13 @@ retrySell:
 	// set the id to the parent struct
 	givenEnergyStruct.BestTimeToSell = resultSell.LastId
 
+	// ========= SECTION update
+
 	// Updates the given struct
 	if !givenEnergyStruct.UpdateBestTimes(resultBuy.LastId, resultSell.LastId) {
 		fmt.Println("Failed to update. Please check database!")
+		fmt.Println("Failed to fetch... We are checking...")
+	} else {
+		fmt.Println("Fetching with succes!")
 	}
 }

@@ -45,7 +45,6 @@ func (a *ApiClientStruct) StartFetchingData() {
 	if err != nil {
 		logging.Log(logging.Error, err.Error())
 		fmt.Println("Error starting request in: ", a.Name, ". \n Check logs for detailed information")
-
 		return
 	}
 
@@ -62,6 +61,7 @@ func (a *ApiClientStruct) StartFetchingData() {
 			// sends a get request with the full url
 			response, err := http.DefaultClient.Do(httpRequest)
 
+			// if there is an response err, we just reset and continue with our day
 			if err != nil {
 				logging.Log(logging.Error, err.Error())
 				ticker.Reset(a.GetInterval)
@@ -70,8 +70,16 @@ func (a *ApiClientStruct) StartFetchingData() {
 
 			body, err := io.ReadAll(response.Body)
 
+			// checks for errors from the body
+			if err != nil {
+				logging.Log(logging.Error, err.Error())
+				break
+			}
+
+			// gets the selected struct type
 			t := reflect.TypeOf(a.StructType)
 
+			// if the type is nil -> just return
 			if t == nil {
 				logging.Log(logging.Error, fmt.Sprintf("No struct type defined for client: %s", a.Name))
 				fmt.Println("No struct type defined for client: ", a.Name)
@@ -82,7 +90,7 @@ func (a *ApiClientStruct) StartFetchingData() {
 			givenStruct := reflect.New(t).Interface()
 
 			// unmarshals it into our given struct
-			if err := json.Unmarshal(body, givenStruct); err != nil {
+			if err := json.Unmarshal(body, &givenStruct); err != nil {
 				logging.Log(logging.Error, err.Error())
 				ticker.Reset(a.GetInterval)
 				break
@@ -90,8 +98,14 @@ func (a *ApiClientStruct) StartFetchingData() {
 
 			// We then check if it has the interface implemented and then transform our data
 			if converter, ok := givenStruct.(EnergyConverter); ok {
+				// sends the data back to our chan
 				a.SendBackChan <- converter.ConvertToEnergyStruct()
+			} else {
+				// logs the error
+				logging.Log(logging.Error, fmt.Sprintf("No interface for: %s", a.Name))
+				fmt.Println("Interface isnt there for: ", a.Name)
 			}
+
 			ticker.Reset(a.GetInterval)
 		}
 	}

@@ -2,6 +2,7 @@ package startup
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 
 	"mikel-kunze.com/energy-stock-exchange-api/database"
@@ -53,5 +54,6 @@ func CreateDatabaseTables() bool {
 	// FIXME
 	os.Setenv("Started", "true")
 
+	fmt.Println("Created tables successful")
 	return true
 }
