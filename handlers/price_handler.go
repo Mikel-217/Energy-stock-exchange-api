@@ -28,9 +28,11 @@ func HandlePriceRequests(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		w.Header().Add("Content-Type", "application/json")
 		w.Write(response)
 		w.WriteHeader(http.StatusOK)
 		return
+
 	case q.Has("start"):
 		date1 := q.Get("start")
 		date2 := q.Get("end")
@@ -41,6 +43,7 @@ func HandlePriceRequests(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		w.Header().Add("Content-Type", "application/json")
 		w.Write(response)
 		w.WriteHeader(http.StatusOK)
 		return

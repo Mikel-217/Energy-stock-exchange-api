@@ -50,7 +50,9 @@ retry:
 	go func() {
 
 		for i := range e.AllPricesAndTheyreTime {
-			e.AllPricesAndTheyreTime[i].ConvertToDatabaseStruct().InsertIntoDatabase()
+			converted := e.AllPricesAndTheyreTime[i].ConvertToDatabaseStruct()
+			converted.EnergyPriceId = resultParent.LastId
+			converted.InsertIntoDatabase()
 		}
 	}()
 
