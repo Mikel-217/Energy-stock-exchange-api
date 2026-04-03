@@ -14,9 +14,6 @@ import (
 	"mikel-kunze.com/energy-stock-exchange-api/structs"
 )
 
-// TODO:
-// - Add command for server-console which rebuilds clients
-
 type ClientJson struct {
 	Name        string `json:"api-name"`
 	BaseUrl     string `json:"api-base-url"`
@@ -27,12 +24,14 @@ type ClientJson struct {
 	StructName  string `json:"api-struct-type"`
 }
 
+// ========== !NOTE! ==========
+// Add new structs here
 var structRegistry = map[string]any{
 	"EnergyCharts": apistructs.EnergyChartsApiStruct{},
 	// Add new structs here as you create them
 }
 
-// Builds all our api clients
+// Builds all our api clients and the response chan
 func BuildAllClients() ([]*apiclient.ApiClientStruct, chan structs.EnergyPriceStruct) {
 
 	allClientData := getJsonData() // gets all the required data from the json config

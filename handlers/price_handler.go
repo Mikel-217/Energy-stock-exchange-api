@@ -21,22 +21,35 @@ func HandlePriceRequests(w http.ResponseWriter, r *http.Request) {
 	switch {
 	case q.Has("all"):
 		date := q.Get("all")
-		response, ok := handleAllData(date)
+
+		if date == "" {
+			date = time.Now().Format("2006-01-02 15:04:05")
+		}
+
+		response, ok := handleAllDataPrice(date)
 
 		if !ok {
 			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte("There was an error getting your data!"))
 			return
 		}
 
 		w.Header().Add("Content-Type", "application/json")
-		w.Write(response)
 		w.WriteHeader(http.StatusOK)
+		w.Write(response)
 		return
 
 	case q.Has("start"):
 		date1 := q.Get("start")
 		date2 := q.Get("end")
-		response, ok := handleDateRange(date1, date2)
+
+		if date1 == "" || date2 == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("No dates given"))
+			return
+		}
+
+		response, ok := handleTimeStampPrice(date1, date2)
 
 		if !ok {
 			w.WriteHeader(http.StatusInternalServerError)
@@ -44,10 +57,33 @@ func HandlePriceRequests(w http.ResponseWriter, r *http.Request) {
 		}
 
 		w.Header().Add("Content-Type", "application/json")
-		w.Write(response)
 		w.WriteHeader(http.StatusOK)
+		w.Write(response)
 		return
 
+	case q.Has("id"):
+
+		id, err := strconv.Atoi(q.Get("id"))
+
+		if err != nil {
+			logging.Log(logging.Error, err.Error())
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("No id found"))
+			return
+		}
+
+		response, ok := handlePriceId(id)
+
+		if !ok {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte("There was an error getting your data"))
+			return
+		}
+
+		w.Header().Add("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write(response)
+		return
 	default:
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -56,7 +92,7 @@ func HandlePriceRequests(w http.ResponseWriter, r *http.Request) {
 
 // handels the current date
 // returns the json data and an indication of success
-func handleAllData(date string) ([]byte, bool) {
+func handleAllDataPrice(date string) ([]byte, bool) {
 
 	splitedDate := strings.Split(date, "-")
 
@@ -93,7 +129,7 @@ func handleAllData(date string) ([]byte, bool) {
 
 // handels the date range data
 // returns the json data and an indication of success
-func handleDateRange(start, end string) ([]byte, bool) {
+func handleTimeStampPrice(start, end string) ([]byte, bool) {
 
 	startDate := strings.Split(start, "-")
 
@@ -141,4 +177,27 @@ func convertToInt(d string) int {
 
 	i, _ := strconv.Atoi(d)
 	return i
+}
+
+// handels the price by id
+func handlePriceId(id int) ([]byte, bool) {
+
+	dbBuilder := database.CreateNewBuilder[databasestructs.DateAndPriceStruct]()
+
+	db := dbBuilder.AddQuery("SELECT * FROM DateAndPrice WHERE DatePriceId = ?;").AddQueryParams([]any{id}).Build()
+
+	data := db.GetData()
+
+	if len(data) == 0 {
+		return []byte{}, false
+	}
+
+	jsonData, err := json.Marshal(data)
+
+	if err != nil {
+		logging.Log(logging.Error, err.Error())
+		return []byte{}, false
+	}
+
+	return jsonData, true
 }

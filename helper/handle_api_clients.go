@@ -101,6 +101,6 @@ retrySell:
 		fmt.Println("Failed to update. Please check database!")
 		fmt.Println("Failed to fetch... We are checking...")
 	} else {
-		fmt.Println("Fetching with succes!")
+		fmt.Println("Fetching with succes, with: ", len(e.AllPricesAndTheyreTime), " entrys")
 	}
 }
