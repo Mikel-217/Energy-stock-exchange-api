@@ -10,10 +10,10 @@ import (
 // ============ EnergyPriceStruct ============
 
 type EnergyPriceStruct struct {
-	EnergyPriceId  uint // Primary key
-	CurrentDate    time.Time
-	BestTimeToBuy  uint // foreign key
-	BestTimeToSell uint // foreign key
+	EnergyPriceId  uint      `json:"energy-price-id"` // Primary key
+	CurrentDate    time.Time `json:"date"`
+	BestTimeToBuy  uint      `json:"best-time-to-buy"`  // foreign key
+	BestTimeToSell uint      `json:"best-time-to-sell"` // foreign key
 }
 
 // Inserts the given EnergyPriceStruct into the database
@@ -50,10 +50,10 @@ func (e *EnergyPriceStruct) UpdateBestTimes(bestTimeToById, bestTimeToSellId uin
 // ============ DateAndPriceStruct ============
 
 type DateAndPriceStruct struct {
-	DatePriceId   uint
-	Date          time.Time
-	Price         float32
-	EnergyPriceId uint
+	DatePriceId   uint      `json:"date-price-id"`
+	Date          time.Time `json:"time"`
+	Price         float32   `json:"price"`
+	EnergyPriceId uint      `json:"parent-id"`
 }
 
 // Inserts the given DataAndPriceStruct

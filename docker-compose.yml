@@ -7,7 +7,7 @@ services:
         condition: service_healthy # we wait for the database to be fully ready
     environment:
       JWT-Secret: "Production_test_here_i_come" # Change this if production!
-      DB-Conn: "energy:1234@tcp(energy-db:3306)/EnergyApi" # TODO add db
+      DB-Conn: "energy:1234@tcp(energy-db:3306)/EnergyApi?parseTime=true" # TODO add db
     ports:
       - "8080:8080"
     links:

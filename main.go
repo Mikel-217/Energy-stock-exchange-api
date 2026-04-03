@@ -5,10 +5,14 @@ import (
 	"net/http"
 	"os"
 
+	"mikel-kunze.com/energy-stock-exchange-api/handlers"
 	"mikel-kunze.com/energy-stock-exchange-api/helper"
 	"mikel-kunze.com/energy-stock-exchange-api/logging"
 	"mikel-kunze.com/energy-stock-exchange-api/startup"
 )
+
+// TODO:
+// - implement server console to manage stuff easyer
 
 func main() {
 
@@ -26,6 +30,10 @@ func main() {
 	fmt.Println("Setup successful, now starting web-server...")
 
 	mux := http.NewServeMux()
+
+	// our api interfaces
+	mux.HandleFunc("GET /price", handlers.HandlePriceRequests)
+	mux.HandleFunc("GET /recommendation", handlers.HandleRecommendationRequests)
 
 	// starts the server and checks for a error
 	if err := http.ListenAndServe(":8080", mux); err != nil {
