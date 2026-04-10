@@ -29,7 +29,7 @@ Also there is an generic database-read-client builder, which can build a databas
 - Add when to buy recommandation -> not finished yet
 - Add a server console to change some stuff like intervals or urls
 - Add a realtime chart to see what the current price is
-- Add Web-UI -> use svelte with ts
+- Add Web-UI
 
 ## Future stuff
 - Add basic user authentication -> maybe
